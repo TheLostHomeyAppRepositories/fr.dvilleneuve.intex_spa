@@ -28,8 +28,7 @@
     "class": "other",
     "pair": [
         {
-            "id": "loading",
-            "template": "loading"
+            "id": "loading2"
         },
         {
             "id": "list_devices",

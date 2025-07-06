@@ -1,1 +1,14 @@
-{}
+{
+  "pair": {
+    "loading": {
+      "title": "Searching for devices...",
+      "description": "Please wait while we search for Intex Spa devices on your network.",
+      "waiting_for": "Waiting for message on topic:"
+    },
+    "no_devices_selected": "No devices were selected"
+  },
+  "mqtt_client": {
+    "unavailable": "MQTT client is not available. Please install the MQTT app first.",
+    "no_new_devices": "No new devices found"
+  }
+}

@@ -9,28 +9,55 @@ class IntexDriver extends Homey.Driver {
     this.log('IntexDriver has been initialized');
   }
 
+  onPairListDevices(session) {
+    this.log(`onPairListDevices called`);
+
+    session.setHandler('list_devices', async (data, tmp) => {
+      return Promise.reject(new Error(driver.homey.__('mqtt_client.no_new_devices')));
+    });
+  }
+
   onPair(session) {
     this.log(`onPair called`);
 
     let driver = this;
     let devices = {};
     let selectedDevices = [];
+    let pairingTimeout = null;
 
     session.setHandler('showView', async (viewId) => {
       driver.log(`onPair current phase: "${viewId}"`);
 
-      if (viewId === 'loading') {
+      if (viewId === 'loading2') {
         if (!this.homey.app.clientAvailable) {
           return Promise.reject(new Error(driver.homey.__('mqtt_client.unavailable')));
         }
 
         this.log("onPairLoading: Searching for devices (ie: waiting for messages from topic 'SpaTiTan/pool/model')");
 
+        // Emit the topic root to the frontend
+        session.emit('listen_topic', {
+          listenTopic: '/' + this.homey.app.mqttTopicRoot + '/pool/model'
+        });
+
+        // Set a timeout for device discovery (5 minutes)
+        pairingTimeout = setTimeout(() => {
+          driver.log("onPairLoading: Timeout reached - no device discovered within 5 minutes");
+          clearInterval(interval);
+          
+          session.emit('timeout', {
+            title: 'Device discovery timeout',
+            message: 'No devices were discovered within 1 minute. Please check your network connection and try again.'
+          });
+          session.done();
+        }, 60 * 1000); // 1 minute
+
         let interval = setInterval((driverArg, sessionArg) => {
           if (this.homey.app.discoveredDevice !== undefined) {
             driverArg.log(`onPairLoading: Discovered device: ${this.homey.app.discoveredDevice}`);
 
             clearInterval(interval);
+            clearTimeout(pairingTimeout);
 
             devices = driverArg.pairingFinished(this.homey.app.discoveredDevice);
 
@@ -63,6 +90,13 @@ class IntexDriver extends Homey.Driver {
 
     session.setHandler('create_devices', async () => {
       return selectedDevices;
+    });
+
+    // Clean up timeout when pairing is cancelled or completed
+    session.setHandler('disconnect', () => {
+      if (pairingTimeout) {
+        clearTimeout(pairingTimeout);
+      }
     });
   }
 

@@ -7,5 +7,24 @@
     "$extends": [
         "defaults"
     ],
-    "class": "other"
+    "class": "other",
+    "pair": [
+        {
+            "id": "loading2"
+        },
+        {
+            "id": "list_devices",
+            "template": "list_devices",
+            "navigation": {
+                "next": "create_devices"
+            },
+            "options": {
+                "singular": false
+            }
+        },
+        {
+            "id": "create_devices",
+            "$template": "create_devices"
+        }
+    ]
 }

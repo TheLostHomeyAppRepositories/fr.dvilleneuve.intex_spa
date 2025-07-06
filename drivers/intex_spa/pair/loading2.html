@@ -1,0 +1,95 @@
+<div class="loading2">
+  <div class="loading2__content">
+    <div class="loading2__spinner"></div>
+    <h2>Searching for devices...</h2>
+    <p>Please wait while we search for Intex Spa devices on your network.</p>
+    <div class="loading2__details">
+      <p><strong>Waiting for message on MQTT topic:</strong></p>
+      <code id="mqtt-topic">/SpaTiTan/pool/model</code>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  Homey.on('timeout', function(data) {
+    Homey.alert(data.message, 'error').then(function() {
+      Homey.done();
+    });
+  });
+  Homey.on('listen_topic', function(data) {
+    document.getElementById('mqtt-topic').textContent = data.listenTopic;
+  });
+</script>
+
+<style>
+.loading2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 200px;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 16px;
+}
+
+.loading2__content {
+  max-width: 400px;
+  width: 100%;
+  font-size: 14px !important;
+}
+
+.loading2__spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007cba;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading2 h2 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 20px !important;
+  font-weight: 600;
+}
+
+.loading2 p {
+  margin-bottom: 15px;
+  color: #666;
+  line-height: 1.5;
+  font-size: 15px !important;
+}
+
+.loading2__details {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 20px;
+}
+
+.loading2__details p {
+  margin-bottom: 8px;
+  color: #495057;
+  font-size: 14px !important;
+}
+
+.loading2__details code {
+  background: #e9ecef;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: #dc3545;
+  font-weight: bold;
+  font-size: 13px !important;
+  word-break: break-all;
+}
+</style> 
